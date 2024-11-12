@@ -8,11 +8,20 @@ public class PlayerController : MonoBehaviour
     [SerializeField, Header("移動速度")]
     float playerMoveSpeed;
 
+    [SerializeField, Header("捕まったか")]
+    bool isGet = false;
+
     // Update is called once per frame
     void Update()
     {
         //マウスの入力で移動
         InputKey();
+
+        if (isGet)
+        {
+            this.GetComponent<CapsuleCollider>().isTrigger = isGet;
+            this.GetComponent<Rigidbody>().isKinematic = isGet;
+        }
     }
 
     /// <summary>
@@ -41,5 +50,13 @@ public class PlayerController : MonoBehaviour
         }
 
         transform.position += move;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("weapon"))
+        {
+            isGet = true;
+        }
     }
 }

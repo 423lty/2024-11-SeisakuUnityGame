@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -62,6 +63,27 @@ public class EnemyController : MonoBehaviour
     [SerializeField, Header("追従するか")]
     bool isAdulation = false;
 
+    [SerializeField, Header("最低速度")]
+    float minSpeed;
+
+    [SerializeField, Header("最大速度")]
+    float maxSpeed;
+
+    //--------------------------------------------------//
+    //アニメーション
+    //--------------------------------------------------//
+    [SerializeField,Header("攻撃しているか")]
+    bool isAttack = false;
+
+    [SerializeField, Header("歩行")]
+    bool isWalk = false;
+
+    [SerializeField, Header("はしる")]
+    bool isRun = false;
+
+    [SerializeField,Header("アニメーター")]
+    Animator animator;
+
     // Update is called once per frame
     void Update()
     {
@@ -80,6 +102,9 @@ public class EnemyController : MonoBehaviour
             //追従
             PlayerAdulation();
         }
+
+        //アニメータのセット
+        SetAnimator();
     }
     /// <summary>
     /// キャラクタの移動
@@ -98,6 +123,7 @@ public class EnemyController : MonoBehaviour
 
         //初期位置
         //var pos = new Vector3();
+        
     }
     /// <summary>
     /// 回転
@@ -158,21 +184,41 @@ public class EnemyController : MonoBehaviour
     /// </summary>
     void PlayerAdulation()
     {
-        //追従するオブジェクトを取得
-        var targetPos = targetObject.transform.position;
+        //playerのtransformを設定
+        var player = this.targetObject.transform;
 
-        //ターゲットに向かう距離を計算
-        var direction = (targetPos - transform.position).normalized;
+        //playerとの距離を取得
+        float distance = Vector3.Distance(transform.position, player.position);
 
-        //ターゲットに向けて移動
+        //距離を取得する
+        float speed = Mathf.Lerp(minSpeed, maxSpeed, distance / maxSpeed);
+
+        //敵とplayerの位置を正規化して取得
+        var direction = (player.position - transform.position).normalized;
+
+        //playerの方向に向かって移動
         transform.position += direction * speed * Time.deltaTime;
 
-        //キャラクタの向きを取得
-        var targetRotation = Quaternion.LookRotation(direction);
+        //方向を取得してその方向に無垢
+        Quaternion tragetQuaternion = Quaternion.LookRotation(direction);
+        transform.rotation = Quaternion.Slerp(transform.rotation,tragetQuaternion,Time.deltaTime*5f);
 
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, speed);
+    }
+    /// <summary>
+    /// アニメーションのセット
+    /// </summary>
+    void SetAnimator()
+    {
+        animator.SetBool("run", isRun);
+        animator.SetBool("walk", isRun);
+        animator.SetBool("attack", isAttack);
+
     }
 
+    /// <summary>
+    /// コライダーに入ったら
+    /// </summary>
+    /// <param name="other"></param>
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("player"))

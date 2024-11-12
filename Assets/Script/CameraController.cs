@@ -14,12 +14,6 @@ public class CameraController : MonoBehaviour
     [SerializeField,Header("ï‚ê≥Ç∑ÇÈó ")]
     Vector3 correction;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
     // Update is called once per frame
     void Update()
     {

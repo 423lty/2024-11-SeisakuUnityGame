@@ -2,13 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+
 public class GameController : MonoBehaviour
 {
-    [SerializeField, Header("Œ»İ‚ÌŠÔ")]
+   [SerializeField, Header("ç¾åœ¨ã®æ™‚é–“")]
     static float gameTime;
 
-    [SerializeField,Header("time‚ğ•`‰æ‚·‚éƒIƒuƒWƒFƒNƒg")]
+    [SerializeField,Header("timeã‚’æç”»ã™ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ")]
     GameObject timeObject;
+
+    private void Start()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+    }
 
     // Update is called once per frame
     void Update()

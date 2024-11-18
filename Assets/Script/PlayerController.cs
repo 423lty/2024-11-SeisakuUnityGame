@@ -1,20 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField, Header("�ړ����x")]
+   [SerializeField, Header("移動速度")]
     float playerMoveSpeed;
 
-    [SerializeField, Header("�߂܂�����")]
+    [SerializeField, Header("捕まったか")]
     bool isGet = false;
+
+    [SerializeField, Header("回転速度")]
+    float rotSpeed;
+
+    [SerializeField, Header("リスポーン地点にいる時間")]
+    float respornTime;
+
+    [SerializeField, Header("リスポーン地点に入れる最大時間")]
+    float MaxRespornTime;
 
     // Update is called once per frame
     void Update()
     {
-        //�}�E�X�̓��͂ňړ�
+        //マウスの入力で移動
         InputKey();
 
         if (isGet)
@@ -22,14 +31,16 @@ public class PlayerController : MonoBehaviour
             this.GetComponent<CapsuleCollider>().isTrigger = isGet;
             this.GetComponent<Rigidbody>().isKinematic = isGet;
         }
+
+        MouseOperation();
     }
 
     /// <summary>
-    /// �L�[�{�[�h�̓��͂ňړ�
+    /// キーボードの入力で移動
     /// </summary>
     void InputKey()
     {
-        //�ړ��ʂɎg�p
+        //移動量に使用
         var move = new Vector3();
 
         if (Input.GetKey(KeyCode.A))
@@ -52,6 +63,14 @@ public class PlayerController : MonoBehaviour
         transform.position += move;
     }
 
+    void MouseOperation(){
+        //水平方向の移動量
+        float mouseX = Input.GetAxis("Mouse X");
+
+        //移動量をもとにして回転
+        transform.Rotate(Vector3.up, mouseX * rotSpeed);
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("weapon"))
@@ -59,4 +78,19 @@ public class PlayerController : MonoBehaviour
             isGet = true;
         }
     }
+    private void OnCollisionStay(Collision collision)
+    {
+        //リスポーン地点に居続けた場合
+        if (collision.gameObject.tag == "playerResporn")
+        {
+            //加算
+            respornTime += Time.deltaTime;
+
+            if (respornTime >= MaxRespornTime)
+            {
+                Debug.Log("リスポーン地点から出てください");
+            }
+        }
+    }
+
 }

@@ -125,9 +125,6 @@ public class EnemyController : MonoBehaviour
             //追従
             PlayerAdulation();
         }
-
-     
-
     }
 
     /// <summary>
@@ -232,7 +229,7 @@ public class EnemyController : MonoBehaviour
         isRun = true;
 
         //playerのtransformを設定
-        var player = this.targetObject.transform;
+        var player = targetObject.transform;
 
         //playerとの距離を取得
         float distance = Vector3.Distance(transform.position, player.position);
@@ -266,5 +263,17 @@ public class EnemyController : MonoBehaviour
         animator.SetBool("attack", isAttack);
     }
 
+
+    //当たり判定
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("wall"))
+        {
+            var rot = new Vector3(0, transform.eulerAngles.y * -1, 0);
+
+            transform.eulerAngles = rot;
+            
+        }
+    }
 
 }
